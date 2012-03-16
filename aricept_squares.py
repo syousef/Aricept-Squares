@@ -9,6 +9,9 @@ from aricept_squares_util import *
 
 
 if __name__=="__main__":
+
+### NEED TO UPDATE THIS CODE:
+
     myWin = visual.Window([900,900], monitor='testMonitor', units='deg',color = 'gray')
     
     
