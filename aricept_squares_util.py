@@ -11,11 +11,27 @@ def parse_file(fname):
     #print all_trials
     return all_trials
         
+def get_k(fname):
+    f = open(fname,'r')
+    for line in f:
+        if line[0] == '#':
+            continue
+        k = line
+        print k
+        if k != '':
+            return int(k)
+        else:
+            print 'an error has occurred in getting maxK'
+            return -1
         
-
-def plot_em_up(all_trials, fname):
+def plot_em_up(all_trials, fname, fn):
     import numpy as np, pylab as pl
-    SetSizes = [1,2,3,4,6]
+    k = get_k(fn)
+    if k == -1:
+        print 'no max K found, assuming maxK=2'
+        k = 2
+        
+    SetSizes = [k-1,k,k+1,k+2]
     SOA_gap = [.025,.1,.175,.250,.300]
     f = open(fname.strip('.txt')+'_K.txt','w')
     n_tot = len(all_trials)

@@ -10,9 +10,10 @@ from aricept_squares_util import *
 
 if __name__=="__main__":
 
-### NEED TO UPDATE THIS CODE:
+    myWin = visual.Window([1024,768], monitor='testMonitor', units='deg',color = 'gray',screen=1)
 
-    myWin = visual.Window([900,900], monitor='testMonitor', units='deg',color = 'gray')
+# old code
+#   myWin = visual.Window([900,900], monitor='testMonitor', units='deg',color = 'gray')
     
     
     #________________________________________________________________
@@ -41,7 +42,7 @@ if __name__=="__main__":
     else:
         day_num = int(day_num)
      
-        
+     
     date = str(dt.date.today())
     day_path = 'data/'+name+'/day'+str(day_num)
     try:
@@ -50,9 +51,18 @@ if __name__=="__main__":
         print 'directory '+day_path+' already exists'
     
     fname = day_path+'/'+mode+'.txt'
+    fn = 'data/'+name+'/maxK.txt'
     f_out = open(fname,'w')
     f_out.write('# subject: '+name+' \n# day: '+str(day_num)+' \n# mode: '+mode+' \n')
     f_out.write('# date: '+date+' \n#\n# i_TRIAL, SSIZE, SOA_gap, CHANGE, ANSWER, ANSWER_TYPE, ANSWER_INT \n')
+    
+    if day_num == 1 and mode.lower() in ['capacity']:
+        print 'making new capacity file'
+        f_cap = open(fn,'w')
+        f_cap.write('# subject: '+name+' \n# day: '+str(day_num)+' \n# mode: '+mode+' \n')
+        f_cap.write('# date: '+date+' \n#\n# Max Capacity \n')
+        f_cap.close()
+
     
     #________________________________________________________________
     #                                           make trials
@@ -282,7 +292,8 @@ if __name__=="__main__":
     
     f_out.close()
     myWin.close()
-    plot_em_up(all_trials, fname)
+    plot_em_up(all_trials, fname,fn)
+
 
     
 
