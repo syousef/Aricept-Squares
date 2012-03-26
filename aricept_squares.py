@@ -1,7 +1,7 @@
 from psychopy import visual, event, core, sound,gui
 from math import sin, cos
 import numpy as np
-import numpy.random as rand
+import  numpy.random as rand
 import sys,os, datetime as dt
 import random
 import pylab as pl
@@ -9,13 +9,13 @@ from aricept_squares_util import *
 
 
 if __name__=="__main__":
+    #for subject testing on a dual-display system
+#    myWin = visual.Window([1024,768], monitor='testMonitor', units='deg',color = 'gray',screen=1)   
 
-    myWin = visual.Window([1024,768], monitor='testMonitor', units='deg',color = 'gray',screen=1)
-
-# old code
-#   myWin = visual.Window([900,900], monitor='testMonitor', units='deg',color = 'gray')
+    #for testing on a single-display system
+    myWin = visual.Window([1024,768], monitor='testMonitor', units='deg',color = 'gray')   
     
-    
+    log = open('logfile.txt','w')
     #________________________________________________________________
     #      get subject info
     #________________________________________________________________
@@ -30,6 +30,7 @@ if __name__=="__main__":
         [name,day_num,mode] = myDlg.data
     else: 
         print 'user cancelled'
+        sys.exit()
     
     if mode.lower() not in ['demo','capacity','encoding']:
         print "Unacceptable mode type. Type demo, encoding, or capacity"
@@ -56,40 +57,58 @@ if __name__=="__main__":
     f_out.write('# subject: '+name+' \n# day: '+str(day_num)+' \n# mode: '+mode+' \n')
     f_out.write('# date: '+date+' \n#\n# i_TRIAL, SSIZE, SOA_gap, CHANGE, ANSWER, ANSWER_TYPE, ANSWER_INT \n')
     
-    if day_num == 1 and mode.lower() in ['capacity']:
+    if day_num == 1 and mode in ['capacity']:
         print 'making new capacity file'
         f_cap = open(fn,'w')
         f_cap.write('# subject: '+name+' \n# day: '+str(day_num)+' \n# mode: '+mode+' \n')
         f_cap.write('# date: '+date+' \n#\n# Max Capacity \n')
         f_cap.close()
-
+        run1ss = [1,2,3,4,5,6]
+        run2ss = [1,2,3,4,5,6]
+    elif mode in ['demo']:
+        run1ss = [1,2,3]
+        run2ss = [1,2,3]
+    else:
+        k = get_maxK(fn)
+        if k == -1:
+            k=2
+        run1ss = [k-1,k,k+1,k+2]
+        run2ss = [k-1,k,k+1,k+2]
     
     #________________________________________________________________
-    #      make trials
+    #      randomize set sizes
+    #________________________________________________________________
+    
+    rand.shuffle(run1ss)
+    rand.shuffle(run2ss)
+    SSizes = run1ss+run2ss
+    print >> log, 'run2ss',run2ss, 'run1ss',run1ss, 'SSizes', SSizes
+    
+    
+    #________________________________________________________________
+    #      make blocks
     #________________________________________________________________
     
     
-    if mode.lower() == 'capacity':
+    if mode == 'capacity':
         t_stim = .2
-        n_trials_per_block=80
-        break_time = 133   #breaks after every 133 trials ~ 5 min
-    if mode.lower() == 'encoding':
-        n_trials_per_block=160
+        n_trials_per_block=80 #needs to be divisible by 8
+        break_time = 160   #breaks after every 133 trials ~ 5 min
+    if mode == 'encoding':
+        n_trials_per_block=160 #needs to be divisible by 8
         t_stim = .1
-        break_time = 133   #breaks after every 133 trials ~ 5 min
-    if mode.lower() == 'demo':
-        n_trials_per_block=8   
+        break_time = 160   #breaks after every 133 trials ~ 5 min
+    if mode == 'demo':
+        n_trials_per_block=8   #needs to be divisible by 8
         t_stim = .2
         break_time = 10000  #avoid all breaks in demo mode
     
     n = n_trials_per_block
-    SetSizes = [1,2,3,4,6]
-    if mode.lower() == 'demo':
-        SetSizes = [1,2,3]
+    
     SOA_gap = [.025,.100,.175,.250]
     print 'using SOA gaps: '+str(SOA_gap)
     all_trials = []
-    for ssize in SetSizes:
+    for ssize in SSizes:
         list_items = ['ssize','SOA_gap','change','answer','answer_type','answer_int']
         init_values = [ssize,.025,False,False,'', 0]
         trials0 = []
@@ -124,20 +143,20 @@ if __name__=="__main__":
         for i in eighth_8:
             trials0[i]['SOA_gap']=.250
             
+        #randomize trials within each SSize block:
+        rand.shuffle(trials0)
+        #add trials from this SSize block to the list of all trials
         all_trials=all_trials+trials0
     
     n_tot = len(all_trials)
-    if mode.lower() == 'capacity':
-        #print "total number of trials is "+str(n_tot)+" with estimated length "+str(2.*n_tot/60.)+" minutes"
+    
+    if mode == 'capacity':
         for trial in all_trials:
             trial['SOA_gap'] = .3
-    #if mode.lower() == 'encoding':
-        #print "total number of trials is "+str(n_tot)+" with estimated length "+str(3.*n_tot/60.)+" minutes"
-        
-    #now all trials are in a list of dictionaries. Randomize their order but not for the demo:
-    trial_numbers = range(n_tot)
-    rand.shuffle(trial_numbers)
     
+    for i in range(n_tot):
+        print >> log, all_trials[i]
+    print >> log, 'n_tot:', n_tot
     
     #________________________________________________________________
     #     make stimulus
@@ -180,8 +199,8 @@ if __name__=="__main__":
     
     
     #for trials in randomizer:
-    for ix, trials in enumerate(trial_numbers): #create randomized trial order by indexing random shuffled array
-        if ((ix+1) % break_time) == 0:
+    for trials in range(n_tot):
+        if ((trials+1) % break_time) == 0:
             message = visual.TextStim(myWin,text = 'Take a break!\n Then, press the space bar to continue')
             message.draw()
             myWin.flip()
@@ -289,10 +308,17 @@ if __name__=="__main__":
             +str(all_trials[trials]['SOA_gap'])+ '\t' + str(all_trials[trials]['change']) 
             + '\t' +str(all_trials[trials]['answer'])+'\t'+str(all_trials[trials]['answer_type'])
             +'\t'+str(all_trials[trials]['answer_int'])+'\t\n')
-    
+            
+    log.close()
     f_out.close()
     myWin.close()
-    plot_em_up(all_trials, fname,fn)
+    if day_num == 1 and mode in ['capacity']:
+        maxK = calc_maxK(all_trials,fn)
+        print "subject has a maxK of :",maxK
+        
+    else:
+        maxK = get_maxK(fn)
+        plot_em_up(all_trials, fname, maxK)
 
 
     
