@@ -4,7 +4,7 @@ if __name__=="__main__":
 	try:
 		fname = sys.argv[1]
 	except IndexError:
-		fname = 'data/AL/day1/capacity.txt'
+		fname = 'data/AL/day3/encoding.txt'
 
 
 	from aricept_squares_util import *

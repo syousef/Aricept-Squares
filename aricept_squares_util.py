@@ -156,7 +156,7 @@ def plot_em_up(all_trials, fname, maxK=2):
     print caps,sets,sgs
     pl.clf()
     pl.title('Capacity')
-    pl.axis([0,7,-1,5])
+    #pl.axis([0,7,-1,5])
     pl.xlabel('Set Size')
     pl.ylabel('Capacity (K)')
     for soa in unique(sgs):

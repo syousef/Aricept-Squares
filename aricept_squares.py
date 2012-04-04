@@ -13,7 +13,7 @@ if __name__=="__main__":
 #    myWin = visual.Window([1024,768], monitor='testMonitor', units='deg',color = 'gray',screen=1)   
 
     #for testing on a single-display system
-    myWin = visual.Window([1024,768], monitor='testMonitor', units='deg',color = 'gray')   
+    myWin = visual.Window([1024,768], monitor='testMonitor', units='deg',color = 'gray',screen=1)   
     
     log = open('logfile.txt','w')
     #________________________________________________________________
