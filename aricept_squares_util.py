@@ -95,7 +95,7 @@ def plot_em_up(all_trials, fname, maxK=2):
         SetSizes = [1,2,3,4,5,6]
 
     
-    SOA_gap = [.025,.1,.175,.250,.300]
+    SOA_gap = [.015,.025,.05,.075,.100]
     f = open(fname.strip('.txt')+'_K.txt','w')
     n_tot = len(all_trials)
     
@@ -107,10 +107,6 @@ def plot_em_up(all_trials, fname, maxK=2):
     SOA_gaps = np.array([SOA_gaps[i] for i in ind])
     answer_ints = np.array([answer_ints[i] for i in ind])
     print Ssizes, SOA_gaps,answer_ints
-    
-    #TESTING PURPOSES ONLY!!
-    #answer_ints = [random.randrange( 1, 5 ) for i in range(n_tot)]
-    #COMMENT OUT BEFORE PILOTING!!!!!!!!!
     
     n_trials = len(answer_ints)
     
@@ -124,6 +120,9 @@ def plot_em_up(all_trials, fname, maxK=2):
                 print index, ss,sg
             except ValueError:
                 print "skipping ss="+str(ss)+" , sg="+str(sg)
+                continue
+            if index.size ==0:
+                print "skipping ss=",str(ss), ", sg=",str(sg), " ... not enough data to calculate K"
                 continue
             ans = np.array([answer_ints[x] for x in index])
             hits =  float(len(np.where([ans[i] == 1 for i in range(len(ans))])[0]))
@@ -150,10 +149,14 @@ def plot_em_up(all_trials, fname, maxK=2):
                 sgs.append(sg)
             
     f.close()
+
     caps = np.array(capacities)
     sets=np.array(sets)
     sgs=np.array(sgs)
-    print caps,sets,sgs
+        
+    if caps.size ==0 or sets.size==0 or sgs.size==0:
+        print "no data to plot"
+        return 0
     pl.clf()
     pl.title('Capacity')
     #pl.axis([0,7,-1,5])

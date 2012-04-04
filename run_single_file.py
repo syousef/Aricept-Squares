@@ -9,4 +9,8 @@ if __name__=="__main__":
 
 	from aricept_squares_util import *
 	all_trials = parse_file(fname)
-	plot_em_up(all_trials,fname,-2)
+    
+    #for first day capacity use -2, else put in the capacity from maxK.txt here
+    maxK= -2
+
+	plot_em_up(all_trials,fname,maxK)

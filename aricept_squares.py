@@ -9,11 +9,12 @@ from aricept_squares_util import *
 
 
 if __name__=="__main__":
+    
     #for subject testing on a dual-display system
 #    myWin = visual.Window([1024,768], monitor='testMonitor', units='deg',color = 'gray',screen=1)   
 
     #for testing on a single-display system
-    myWin = visual.Window([1024,768], monitor='testMonitor', units='deg',color = 'gray',screen=1)   
+    myWin = visual.Window([1024,768], monitor='testMonitor', units='deg',color = 'gray')   
     
     log = open('logfile.txt','w')
     #________________________________________________________________
@@ -70,7 +71,8 @@ if __name__=="__main__":
         run2ss = [1,2,3]
     else:
         k = get_maxK(fn)
-        if k == -1:
+        print 'maxK',k
+        if k == -1 or k==None:
             k=2
         run1ss = [k-1,k,k+1,k+2]
         run2ss = [k-1,k,k+1,k+2]
@@ -92,56 +94,62 @@ if __name__=="__main__":
     
     if mode == 'capacity':
         t_stim = .2
-        n_trials_per_block=80 #needs to be divisible by 8
+        n_trials_per_block=40 #needs to be divisible by 10
         break_time = 160   #breaks after every 133 trials ~ 5 min
     if mode == 'encoding':
-        n_trials_per_block=160 #needs to be divisible by 8
+        n_trials_per_block=160 #needs to be divisible by 10
         t_stim = .1
         break_time = 160   #breaks after every 133 trials ~ 5 min
     if mode == 'demo':
-        n_trials_per_block=8   #needs to be divisible by 8
+        n_trials_per_block=10   #needs to be divisible by 10
         t_stim = .2
         break_time = 10000  #avoid all breaks in demo mode
     
     n = n_trials_per_block
     
-    SOA_gap = [.025,.100,.175,.250]
+    SOA_gap = [.015, .025,.05,.075,.100]
     print 'using SOA gaps: '+str(SOA_gap)
     all_trials = []
     for ssize in SSizes:
         list_items = ['ssize','SOA_gap','change','answer','answer_type','answer_int']
-        init_values = [ssize,.025,False,False,'', 0]
+        init_values = [ssize,.015,False,False,'', 0]
         trials0 = []
         for i in range(n):
                 trials0.append(dict(zip(list_items,init_values)))
         half =  np.arange(0,n/2)
-        eighth_1 = np.arange(0,n/8)
-        eighth_2 = np.arange(n/8,n/4)
-        eighth_3 = np.arange(n/4,3*n/8)
-        eighth_4 = np.arange(3*n/8,n/2)
-        eighth_5 = np.arange(n/2,5*n/8)
-        eighth_6 = np.arange(5*n/8,3*n/4)
-        eighth_7 = np.arange(3*n/4,7*n/8)
-        eighth_8 = np.arange(7*n/8,n)
+        tenth_1 = np.arange(0,n/10)
+        tenth_2 = np.arange(n/10,2*n/10)
+        tenth_3 = np.arange(2*n/10,3*n/10)
+        tenth_4 = np.arange(3*n/8,4*n/10)
+        tenth_5 = np.arange(4*n/10,5*n/10)
+        tenth_6 = np.arange(5*n/10,6*n/10)
+        tenth_7 = np.arange(6*n/10,7*n/10)
+        tenth_8 = np.arange(7*n/10,8*n/10)
+        tenth_9 = np.arange(8*n/10,9*n/10)
+        tenth_10 = np.arange(9*n/10,10*n/10)
         
         for i in half:
             trials0[i]['change'] = True
-        for i in eighth_1:
+        for i in tenth_1:
+            trials0[i]['SOA_gap']=.015
+        for i in tenth_2:
             trials0[i]['SOA_gap']=.025
-        for i in eighth_2:
-            trials0[i]['SOA_gap']=.100
-        for i in eighth_3:
-            trials0[i]['SOA_gap']=.175
-        for i in eighth_4:
-            trials0[i]['SOA_gap']=.250
-        for i in eighth_5:
+        for i in tenth_3:
+            trials0[i]['SOA_gap']=.05
+        for i in tenth_4:
+            trials0[i]['SOA_gap']=.075
+        for i in tenth_5:
+            trials0[i]['SOA_gap']=.1
+        for i in tenth_6:
+            trials0[i]['SOA_gap']=.015
+        for i in tenth_7:
             trials0[i]['SOA_gap']=.025
-        for i in eighth_6:
-            trials0[i]['SOA_gap']=.100
-        for i in eighth_7:
-            trials0[i]['SOA_gap']=.175
-        for i in eighth_8:
-            trials0[i]['SOA_gap']=.250
+        for i in tenth_8:
+            trials0[i]['SOA_gap']=.05
+        for i in tenth_9:
+            trials0[i]['SOA_gap']=.075
+        for i in tenth_10:
+            trials0[i]['SOA_gap']=.1
             
         #randomize trials within each SSize block:
         rand.shuffle(trials0)
@@ -152,7 +160,7 @@ if __name__=="__main__":
     
     if mode == 'capacity':
         for trial in all_trials:
-            trial['SOA_gap'] = .3
+            trial['SOA_gap'] = .2
     
     for i in range(n_tot):
         print >> log, all_trials[i]
@@ -318,6 +326,8 @@ if __name__=="__main__":
         
     else:
         maxK = get_maxK(fn)
+        if maxK==-1 or maxK==None:
+           maxK = 2
         plot_em_up(all_trials, fname, maxK)
 
 
