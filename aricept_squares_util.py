@@ -78,7 +78,7 @@ def get_maxK(fname):
         k = line
         print k
         if k != '':
-            return int(k)
+            return int(float(k))
         else:
             print 'an error has occurred in getting maxK'
             return -1
