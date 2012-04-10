@@ -95,11 +95,11 @@ if __name__=="__main__":
     if mode == 'capacity':
         t_stim = .2
         n_trials_per_block=40 #needs to be divisible by 10
-        break_time = 160   #breaks after every 133 trials ~ 5 min
+        break_time = 161   #breaks after every 133 trials ~ 5 min
     if mode == 'encoding':
         n_trials_per_block=160 #needs to be divisible by 10
         t_stim = .1
-        break_time = 160   #breaks after every 133 trials ~ 5 min
+        break_time = 161   #breaks after every 133 trials ~ 5 min
     if mode == 'demo':
         n_trials_per_block=10   #needs to be divisible by 10
         t_stim = .2
@@ -213,9 +213,9 @@ if __name__=="__main__":
             message.draw()
             myWin.flip()
             event.waitKeys(maxWait=None, keyList='space')
-            core.wait(2)
             fix.draw()
             myWin.flip()
+            core.wait(2)
         #Memory Sample, color gray squares depending upon set size, and display for 100 ms
         rand.shuffle(colors)
         rand.shuffle(stims)
