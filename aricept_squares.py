@@ -25,24 +25,29 @@ if __name__=="__main__":
     myDlg.addText('Please enter subject information')
     myDlg.addField('Subject ID:')
     myDlg.addField('Day(1/2/3):')
-    myDlg.addField('Mode(demo/encoding/capacity):')
+    myDlg.addField('Mode(demo/capacity):')
+    myDlg.addField('t_stim(.1/.2):')
     myDlg.show()  #show dialog and wait for OK or Cancel
     if gui.OK:  #then the user pressed OK
-        [name,day_num,mode] = myDlg.data
+        [name,day_num,mode,t_stim] = myDlg.data
     else: 
         print 'user cancelled'
         sys.exit()
     
-    if mode.lower() not in ['demo','capacity','encoding']:
-        print "Unacceptable mode type. Type demo, encoding, or capacity"
+    if mode.lower() not in ['demo','capacity']:
+        print "Unacceptable mode type. Type demo, or capacity"
         sys.exit()
     else:
         mode=mode.lower()
     if day_num not in ['1','2','3']:
         print "Unacceptable day number. Type 1, 2, or 3"
         sys.exit()
+    if t_stim not in ['.1','.2']:
+        print "Unacceptable t_stim. Type .1 or .2"
+        sys.exit()
     else:
         day_num = int(day_num)
+        t_stim=float(t_stim)
      
      
     date = str(dt.date.today())
@@ -52,16 +57,16 @@ if __name__=="__main__":
     except OSError:
         print 'directory '+day_path+' already exists'
     
-    fname = day_path+'/'+mode+'.txt'
-    fn = 'data/'+name+'/maxK.txt'
+    fname = day_path+'/'+mode+'_tstim_'+str(t_stim*1000)+'.txt'
+    fn = 'data/'+name+'/maxK'+str(t_stim*1000)+'.txt'
     f_out = open(fname,'w')
-    f_out.write('# subject: '+name+' \n# day: '+str(day_num)+' \n# mode: '+mode+' \n')
+    f_out.write('# subject: '+name+' \n# day: '+str(day_num)+' \n# mode: '+mode+' \n# t_stim: '+str(t_stim)+' \n')
     f_out.write('# date: '+date+' \n#\n# i_TRIAL, SSIZE, SOA_gap, CHANGE, ANSWER, ANSWER_TYPE, ANSWER_INT \n')
     
     if day_num == 1 and mode in ['capacity']:
         print 'making new capacity file'
         f_cap = open(fn,'w')
-        f_cap.write('# subject: '+name+' \n# day: '+str(day_num)+' \n# mode: '+mode+' \n')
+        f_cap.write('# subject: '+name+' \n# day: '+str(day_num)+' \n# mode: '+mode+' \n# t_stim: '+str(t_stim)+' \n')
         f_cap.write('# date: '+date+' \n#\n# Max Capacity \n')
         f_cap.close()
         run1ss = [1,2,3,4,5,6]
@@ -93,63 +98,41 @@ if __name__=="__main__":
     
     
     if mode == 'capacity':
-        t_stim = .2
-        n_trials_per_block=40 #needs to be divisible by 10
-        break_time = 161   #breaks after every 133 trials ~ 5 min
-    if mode == 'encoding':
-        n_trials_per_block=160 #needs to be divisible by 10
-        t_stim = .1
-        break_time = 161   #breaks after every 133 trials ~ 5 min
+        n_trials_per_block=80 #needs to be divisible by 4
+        break_time = 80   #breaks after every 80 trials ~3min
     if mode == 'demo':
-        n_trials_per_block=10   #needs to be divisible by 10
-        t_stim = .2
+        n_trials_per_block=12   #needs to be divisible by 4
         break_time = 10000  #avoid all breaks in demo mode
     
     n = n_trials_per_block
     
-    SOA_gap = [.015, .025,.05,.075,.100]
+    SOA_gap = [.025,.200]
     print 'using SOA gaps: '+str(SOA_gap)
     all_trials = []
     for ssize in SSizes:
         list_items = ['ssize','SOA_gap','change','answer','answer_type','answer_int']
-        init_values = [ssize,.015,False,False,'', 0]
+        init_values = [ssize,.025,False,False,'', 0]
         trials0 = []
         for i in range(n):
                 trials0.append(dict(zip(list_items,init_values)))
         half =  np.arange(0,n/2)
-        tenth_1 = np.arange(0,n/10)
-        tenth_2 = np.arange(n/10,2*n/10)
-        tenth_3 = np.arange(2*n/10,3*n/10)
-        tenth_4 = np.arange(3*n/8,4*n/10)
-        tenth_5 = np.arange(4*n/10,5*n/10)
-        tenth_6 = np.arange(5*n/10,6*n/10)
-        tenth_7 = np.arange(6*n/10,7*n/10)
-        tenth_8 = np.arange(7*n/10,8*n/10)
-        tenth_9 = np.arange(8*n/10,9*n/10)
-        tenth_10 = np.arange(9*n/10,10*n/10)
+        fourth_1 = np.arange(0,n/4)
+        fourth_2 = np.arange(n/4,2*n/4)
+        fourth_3 = np.arange(2*n/4,3*n/4)
+        fourth_4 = np.arange(3*n/4,4*n/4)
+
         
         for i in half:
             trials0[i]['change'] = True
-        for i in tenth_1:
-            trials0[i]['SOA_gap']=.015
-        for i in tenth_2:
+        for i in fourth_1:
             trials0[i]['SOA_gap']=.025
-        for i in tenth_3:
-            trials0[i]['SOA_gap']=.05
-        for i in tenth_4:
-            trials0[i]['SOA_gap']=.075
-        for i in tenth_5:
-            trials0[i]['SOA_gap']=.1
-        for i in tenth_6:
-            trials0[i]['SOA_gap']=.015
-        for i in tenth_7:
+        for i in fourth_2:
+            trials0[i]['SOA_gap']=.2
+        for i in fourth_3:
             trials0[i]['SOA_gap']=.025
-        for i in tenth_8:
-            trials0[i]['SOA_gap']=.05
-        for i in tenth_9:
-            trials0[i]['SOA_gap']=.075
-        for i in tenth_10:
-            trials0[i]['SOA_gap']=.1
+        for i in fourth_4:
+            trials0[i]['SOA_gap']=.2
+
             
         #randomize trials within each SSize block:
         rand.shuffle(trials0)
@@ -323,7 +306,7 @@ if __name__=="__main__":
     if day_num == 1 and mode in ['capacity']:
         maxK = calc_maxK(all_trials,fn)
         print "subject has a maxK of :",maxK
-        
+        plot_em_up(all_trials,fname,-2)
     else:
         maxK = get_maxK(fn)
         if maxK==-1 or maxK==None:

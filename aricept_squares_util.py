@@ -13,7 +13,7 @@ def parse_file(fname):
         
 def calc_maxK(all_trials,fn):
     import numpy as np
-    sg = .2
+    sg = .200
     SetSizes = [1,2,3,4,6]
     
     n_tot = len(all_trials)
@@ -88,14 +88,14 @@ def plot_em_up(all_trials, fname, maxK=2):
     k = maxK
     SetSizes = [k-1,k,k+1,k+2]
     if k == -1:
-        print 'no max K found, assuming maxK=2'
+        print 'no maxK found, assuming maxK=2'
         k = 2
-    if k==-2:
+    if k== -2:
         print 'running capacity day1'
         SetSizes = [1,2,3,4,5,6]
 
     
-    SOA_gap = [.015,.025,.05,.075,.100]
+    SOA_gap = [.025,.200]
     f = open(fname.strip('.txt')+'_K.txt','w')
     n_tot = len(all_trials)
     
@@ -184,11 +184,6 @@ def unique(seq):
            checked.append(e)
     return checked 
 
-def get_rand_seq(min,max):
-    import urllib
-    url = "http://www.random.org/sequences/?min="+str(min)+"&max="+str(max)+"&col=1&format=html&rnd=new"
-    urlobj = urllib.urlopen("http://www.random.org/sequences/?min=1&max=4&col=1&format=html&rnd=new")
-    text=urlobj.read()
     
     
     
