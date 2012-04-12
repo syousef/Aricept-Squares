@@ -98,7 +98,7 @@ if __name__=="__main__":
     
     
     if mode == 'capacity':
-        n_trials_per_block=80 #needs to be divisible by 4
+        n_trials_per_block=40 #needs to be divisible by 4
         break_time = 80   #breaks after every 80 trials ~3min
     if mode == 'demo':
         n_trials_per_block=12   #needs to be divisible by 4
@@ -140,10 +140,6 @@ if __name__=="__main__":
         all_trials=all_trials+trials0
     
     n_tot = len(all_trials)
-    
-    if mode == 'capacity':
-        for trial in all_trials:
-            trial['SOA_gap'] = .2
     
     for i in range(n_tot):
         print >> log, all_trials[i]
