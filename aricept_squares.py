@@ -123,21 +123,27 @@ if __name__=="__main__":
 
         
         for i in half:
-            trials0[i]['change'] = True
+            trials0[i]['SOA_gap'] = .2
         for i in fourth_1:
-            trials0[i]['SOA_gap']=.025
+            trials0[i]['change']=True
         for i in fourth_2:
-            trials0[i]['SOA_gap']=.2
+            trials0[i]['change']=False
         for i in fourth_3:
-            trials0[i]['SOA_gap']=.025
+            trials0[i]['change']=True
         for i in fourth_4:
-            trials0[i]['SOA_gap']=.2
+            trials0[i]['change']=False
 
-            
+        trials1=[]
+        trials2=[]
+        for i in range(n/2):
+            trials1.append(trials0[i])
+            trials2.append(trials0[i+n/2])
         #randomize trials within each SSize block:
-        rand.shuffle(trials0)
+        rand.shuffle(trials1)
+        rand.shuffle(trials2)
         #add trials from this SSize block to the list of all trials
-        all_trials=all_trials+trials0
+        all_trials=all_trials+trials1
+        all_trials=all_trials+trials2
     
     n_tot = len(all_trials)
     
@@ -165,20 +171,47 @@ if __name__=="__main__":
     
     #define other stimuli, fixation cross, message and feedback sounds
     fix = visual.TextStim(myWin,text = '+',height = 1.0,color = -1)
-    message = visual.TextStim(myWin,text = 'Press the space bar to begin')
+    message = '\n\nPress any key to continue'
     hit_sound = sound.Sound(value='G', secs=0.5, octave=4, sampleRate=44100, bits=16)
     miss_sound = sound.Sound(value='G', secs=0.5, octave=3, sampleRate=44100, bits=16)
     
-    #draw message and wait for key press, then flip the screen so it's empty
-    message.draw()
-    myWin.flip()
-    event.waitKeys(maxWait=None, keyList='space')
-    fix.draw()
-    myWin.flip()
+    TextBlocks= ["Hello and thanks for participating! \n\n This is a visual working memory task in which you will be shown \
+a set of colored squares. The number of squares will range from 1 square to 6 squares. Your task is \
+to remember the color of a set of squares that will be shown to you very briefly. Following these squares, \
+a set of multicolored squares will be shown to you. This 'mask' is presented as an experimental control, \
+you do not need to remember any information about the 'mask' squares.",
+                            "Following the 'mask' you will have a blank screen and then you will be shown another set of squares. \
+This set will consist of the same number of squares you saw in the beginning and in the same locations. \
+Your task is to decide if the colors are the same as the original set you saw. It is possible that one of the squares \
+has changed color. It is also just as equally possible that none of the squares have changed color and \
+it is the exact same set as the beginning.",
+                            "If you decide that there has been no change, press the '1' key on the keyboard.\n\
+If you decide that there has been a change, press the '2' key on the keyboard. ",
+                            "After your response, you will hear a tone. \n A HIGH pitched tone means your answer was CORRECT.\n \
+A LOW pitched tone means your answer was INCORRECT.",
+                            "Typically people can remember 3 (+/- 1) squares. For many of the trials more squares will be on the screen \
+than you can remember. In cases like this feel free to remember as much as you can (a subset of the squares) \
+instead of attempting to remember all of them.",
+                            "It is very important that you keep your eyes fixated in the center of the screen during the entire trial. \
+Because the stimuli can appear in any location, and because they are presented for a very brief duration, \
+keeping your gaze at the center of the screen may improve your performance.",
+                            "You can rest your eyes in between trials before pressing the 1 or 2 key and of course during breaks. \
+You are free to take breaks whenever you need by pausing before answering the trials as just mentioned \
+and also at the predetermined break times. Feel free to come outside of the room, get fresh air, have some water, etc. \
+If you do not want to take a break and would like to continue, just press the space bar. ",
+                            ""]
+                            
+    for text_i in TextBlocks:
+        #draw message and wait for key press, then flip the screen so it's empty
+        text_to_draw = visual.TextStim(myWin,text = text_i+message)
+        text_to_draw.draw()
+        myWin.flip()
+        event.waitKeys(maxWait=None)
+        fix.draw()
+        myWin.flip()
     
     #give subjects a second to settle in
     core.wait(1.0)
-    
     
     #________________________________________________________________
     #    start trials
